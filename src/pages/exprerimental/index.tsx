@@ -1,18 +1,32 @@
 import React from 'react'
-import { Stage, Layer, Rect } from 'react-konva';
+import { Stage, Layer, Rect, Image } from 'react-konva';
 import { Html } from 'react-konva-utils';
+import useImage from 'use-image'
 
 export default function Exprerimental() {
-  // const [images, setImages] = useState<File[] | null>(null)
+  const [images, setImages] = React.useState("")
 
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const blobToBase64 = async (blob: File) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  const handleImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files?.[0]
     console.log(files)
-    // setImages(prev => [...prev, files])
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const base64img = await blobToBase64(files!)
+
+    setImages(base64img as unknown as string)
 
   }
 
-  // console.log(images)
+  const [img] = useImage(images)
+
 
   return (
     <div>
@@ -29,8 +43,8 @@ export default function Exprerimental() {
               },
             }}
           >
-            {}
-           <img src="/AOT.jpeg" alt="" />
+            {/* {images && <img src={images} alt="" />} */}
+
           </Html>
           <Rect
             x={20}
@@ -41,6 +55,7 @@ export default function Exprerimental() {
             shadowBlur={5}
             draggable={true}
           />
+          {img && <Image image={img} draggable />}
         </Layer>
       </Stage>
     </div>
